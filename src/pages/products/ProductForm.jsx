@@ -21,11 +21,21 @@ function ProductForm() {
 
   const initialData = {
     name: '',
+    productID: '',
     brand: '',
     description: '',
+    grossWeight: '',
+    netWeight: '',
+    stoneWeight: '',
+    stoneCount: '',
+    metalType: '',
+    purity: '',
+    productDimensions: '',
     hsn: '',
     price: '',
-    tax: '',
+    makingCharges: '',
+    stonePrice: '',
+    gst: '',
     thumbnail: null,
     images: [],
     isFeatured: false,
@@ -82,10 +92,9 @@ function ProductForm() {
   }
 
   useEffect(() => {
-
     // If editing, fetch product data
     if (isEditing) {
-      fetchProduct(IDBDatabase)
+      fetchProduct()
     }
   }, [id, isEditing])
 
@@ -96,7 +105,6 @@ function ProductForm() {
       [name]: type === 'checkbox' ? checked : value,
     })
   }
-
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -137,9 +145,7 @@ function ProductForm() {
         }
         toast.success(`Product created successfully`)
         navigate('/products')
-
       }
-
     } catch (error) {
       console.error('Error saving product:', error)
       toast.error('Failed to save product')
@@ -150,7 +156,6 @@ function ProductForm() {
 
   const selectHandleChange = (newValue) => {
     return (field) => {
-      // setFormData((prev) => ({ ...prev, [field]: newValue?.map(item => item?.value) }))
       setFormData((prev) => ({ ...prev, [field]: newValue }))
     }
   };
@@ -243,11 +248,12 @@ function ProductForm() {
       </div>
 
       <div className="space-y-6">
+        {/* Basic Information */}
         <div className="card p-6 h-fit">
           <h2 className="text-lg font-medium text-neutral-900 mb-4">Basic Information</h2>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-6">
-            <div className="sm:col-span-4">
+            <div className="sm:col-span-3">
               <label htmlFor="name" className="form-label">
                 Product Name <span className="text-error-500">*</span>
               </label>
@@ -262,9 +268,24 @@ function ProductForm() {
               />
             </div>
 
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
+              <label htmlFor="productID" className="form-label">
+                Product ID <span className="text-error-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="productID"
+                name="productID"
+                value={formData?.productID}
+                onChange={handleChange}
+                className="form-input"
+                required
+              />
+            </div>
+
+            <div className="sm:col-span-3">
               <label htmlFor="brand" className="form-label">
-                brand <span className="text-error-500">*</span>
+                Brand <span className="text-error-500">*</span>
               </label>
               <input
                 type="text"
@@ -275,6 +296,28 @@ function ProductForm() {
                 className="form-input"
                 required
               />
+            </div>
+
+            <div className="sm:col-span-3">
+              <label htmlFor="metalType" className="form-label">
+                Metal Type <span className="text-error-500">*</span>
+              </label>
+              <select
+                id="metalType"
+                name="metalType"
+                value={formData?.metalType}
+                onChange={handleChange}
+                className="form-input"
+                required
+              >
+                <option value="">Select Metal Type</option>
+                <option value="Gold">Gold</option>
+                <option value="White Gold">White Gold</option>
+                <option value="Rose Gold">Rose Gold</option>
+                <option value="Platinum">Platinum</option>
+                <option value="Silver">Silver</option>
+                <option value="Diamond">Diamond</option>
+              </select>
             </div>
 
             <div className="sm:col-span-6">
@@ -290,28 +333,123 @@ function ProductForm() {
                 className="form-input"
               />
             </div>
+          </div>
+        </div>
 
+        {/* Weight & Measurements */}
+        <div className="card p-6">
+          <h2 className="text-lg font-medium text-neutral-900 mb-4">Weight & Measurements</h2>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-6">
             <div className="sm:col-span-2">
-              <label htmlFor="hsn" className="form-label">
-                hsn
+              <label htmlFor="grossWeight" className="form-label">
+                Gross Weight (g)
               </label>
               <input
                 type="text"
-                id="hsn"
-                name="hsn"
-                value={formData?.hsn}
+                id="grossWeight"
+                name="grossWeight"
+                value={formData?.grossWeight}
                 onChange={handleChange}
                 className="form-input"
+                placeholder="e.g., 8g"
               />
             </div>
 
+            <div className="sm:col-span-2">
+              <label htmlFor="netWeight" className="form-label">
+                Net Weight (g)
+              </label>
+              <input
+                type="text"
+                id="netWeight"
+                name="netWeight"
+                value={formData?.netWeight}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="e.g., 7g"
+              />
+            </div>
 
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-2">
+              <label htmlFor="stoneWeight" className="form-label">
+                Stone Weight (g)
+              </label>
+              <input
+                type="text"
+                id="stoneWeight"
+                name="stoneWeight"
+                value={formData?.stoneWeight}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="e.g., 1g"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="stoneCount" className="form-label">
+                Stone Count
+              </label>
+              <input
+                type="number"
+                id="stoneCount"
+                name="stoneCount"
+                value={formData?.stoneCount}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="e.g., 1"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="purity" className="form-label">
+                Purity
+              </label>
+              <select
+                id="purity"
+                name="purity"
+                value={formData?.purity}
+                onChange={handleChange}
+                className="form-input"
+              >
+                <option value="">Select Purity</option>
+                <option value="24K">24K</option>
+                <option value="22K">22K</option>
+                <option value="18K">18K</option>
+                <option value="14K">14K</option>
+                <option value="Platinum">Platinum</option>
+                <option value="Silver">Silver</option>
+              </select>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="productDimensions" className="form-label">
+                Product Dimensions
+              </label>
+              <input
+                type="text"
+                id="productDimensions"
+                name="productDimensions"
+                value={formData?.productDimensions}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="e.g., 2cm X 2cm"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Pricing Information */}
+        <div className="card p-6">
+          <h2 className="text-lg font-medium text-neutral-900 mb-4">Pricing Information</h2>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-6">
+            <div className="sm:col-span-2">
               <div className="flex justify-between">
                 <label htmlFor="price" className="form-label">
-                  Price <span className="text-error-500">*</span>
+                  Base Price <span className="text-error-500">*</span>
                 </label>
-                <span className="text-xs text-neutral-500">Rs</span>
+                <span className="text-xs text-neutral-500">₹</span>
               </div>
               <div className="relative mt-1 rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -333,35 +471,85 @@ function ProductForm() {
             </div>
 
             <div className="sm:col-span-2">
-              <label htmlFor="tax" className="form-label">
-                tax
+              <label htmlFor="makingCharges" className="form-label">
+                Making Charges (₹)
+              </label>
+              <input
+                type="number"
+                id="makingCharges"
+                name="makingCharges"
+                value={formData?.makingCharges}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="0.00"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="stonePrice" className="form-label">
+                Stone Price (₹)
+              </label>
+              <input
+                type="number"
+                id="stonePrice"
+                name="stonePrice"
+                value={formData?.stonePrice}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="0.00"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="gst" className="form-label">
+                GST (%)
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                id="gst"
+                name="gst"
+                value={formData?.gst}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="e.g., 3"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="hsn" className="form-label">
+                HSN Code
               </label>
               <input
                 type="text"
-                id="tax"
-                name="tax"
-                value={formData?.tax}
+                id="hsn"
+                name="hsn"
+                value={formData?.hsn}
                 onChange={handleChange}
                 className="form-input"
               />
             </div>
+          </div>
+        </div>
 
+        {/* Additional Information */}
+        <div className="card p-6">
+          <h2 className="text-lg font-medium text-neutral-900 mb-4">Additional Information</h2>
 
-
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-6">
             <div className="sm:col-span-2 flex items-center pt-5">
               <input
-                id="featured"
-                name="featured"
+                id="isFeatured"
+                name="isFeatured"
                 type="checkbox"
                 checked={formData?.isFeatured}
                 onChange={handleChange}
                 className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded"
               />
-              <label htmlFor="featured" className="ml-2 block text-sm text-neutral-700">
+              <label htmlFor="isFeatured" className="ml-2 block text-sm text-neutral-700">
                 Featured product
               </label>
             </div>
-
 
             <div className="sm:col-span-2">
               <label htmlFor="tags" className="form-label">
@@ -399,8 +587,8 @@ function ProductForm() {
               </div>
             </div>
 
-            <div className="sm:col-span-2">
-              <label htmlFor="features" className="form-label">
+            {/* <div className="sm:col-span-2">
+              <label htmlFor="careTips" className="form-label">
                 Care Tips
               </label>
               <div className='w-full z-[9999]'>
@@ -415,11 +603,11 @@ function ProductForm() {
                   }}
                 />
               </div>
-            </div>
-
+            </div> */}
           </div>
         </div>
 
+        {/* Variant Items */}
         <div className="card p-6">
           <div className="flex flex-col justify-between items-center mb-4">
             <div className='w-full flex justify-between item-center'>
@@ -427,30 +615,30 @@ function ProductForm() {
               <button
                 onClick={addVarItem}
                 className='text-xs bg-blue-500 text-white px-2 rounded-lg'>
-                Add
+                Add Variant
               </button>
             </div>
-            <div className="flex flex-col justify-between items-center mb-4 gap-4">
+            <div className="flex flex-col justify-between items-center mb-4 gap-4 w-full">
               {
                 formData?.variantItems?.length > 0
                 &&
                 (
                   formData?.variantItems?.map((item, index) => (
-                    <VariantItem data={item} setData={(val) => {
-                      console.log({ val })
-                      const mapped = formData?.variantItems?.map(elem => {
-                        if (item?.itemId === elem?.itemId) {
-                          console.log({})
-                          return val
-                        }
-
-                        return elem
-                      })
-
-                      setFormData((prev) => ({ ...prev, variantItems: [...mapped] }))
-                    }}
-
-                      index={index} removeVarItem={removeVarItem} />
+                    <VariantItem 
+                      key={item.itemId}
+                      data={item} 
+                      setData={(val) => {
+                        const mapped = formData?.variantItems?.map(elem => {
+                          if (item?.itemId === elem?.itemId) {
+                            return val
+                          }
+                          return elem
+                        })
+                        setFormData((prev) => ({ ...prev, variantItems: [...mapped] }))
+                      }}
+                      index={index} 
+                      removeVarItem={removeVarItem} 
+                    />
                   ))
                 )
               }
@@ -458,9 +646,9 @@ function ProductForm() {
           </div>
         </div>
 
-        {/* thumbnail images */}
+        {/* Thumbnail Image */}
         <div className="card p-6">
-          <h2 className="text-lg font-medium text-neutral-900 mb-4">thumbnail Image</h2>
+          <h2 className="text-lg font-medium text-neutral-900 mb-4">Thumbnail Image</h2>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
@@ -490,11 +678,14 @@ function ProductForm() {
           </div>
         </div>
 
-        {/* Images */}
-        <MultiImageUploader images={formData?.images} setImages={(val) => setFormData((prev) => ({
-          ...prev,
-          images: val
-        }))} />
+        {/* Additional Images */}
+        <MultiImageUploader 
+          images={formData?.images} 
+          setImages={(val) => setFormData((prev) => ({
+            ...prev,
+            images: val
+          }))} 
+        />
 
         <div className="flex justify-end space-x-3">
           {isEditing && (
@@ -539,8 +730,10 @@ function ProductForm() {
   )
 }
 
-export default ProductForm
+// VariantItem and Spec components remain the same as in your original code
+// ... [VariantItem and Spec components code]
 
+export default ProductForm
 function VariantItem({ data, setData, index, removeVarItem }) {
   const axiosPrivate = useAxiosPrivate()
   const handleVarItemChange = (e) => {
