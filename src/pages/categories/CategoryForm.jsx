@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { FiSave, FiTrash, FiUpload } from 'react-icons/fi'
@@ -18,12 +18,17 @@ function CategoryForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Refs for file inputs
+  const mainImageInputRef = useRef(null)
+  const hoverImageInputRef = useRef(null)
+
   const [formData, setFormData] = useState({
     name: '',
     parent: null,
     description: '',
     slug: '',
     image: '',
+    hoverImage: '',
     productIds: [],
     isArchived: null,
   })
@@ -51,6 +56,7 @@ function CategoryForm() {
             parent: category?.parent?._id,
             description: category?.description,
             image: category?.image,
+            hoverImage: category?.hoverImage,
             isArchived: category?.isArchived,
             productIds: category?.productIds?.map(item => item?._id)
           })
@@ -87,19 +93,55 @@ function CategoryForm() {
     }
   }
 
-  const handleImageChange = async (e) => {
+  const handleImageUpload = async (file, imageType) => {
     try {
-      const data = await uploadSingleFile(axiosPrivate, e.target.files[0])
+      const data = await uploadSingleFile(axiosPrivate, file)
 
       if (data.success) {
-        setFormData({
-          ...formData,
-          image: data.data.file,
-        })
+        setFormData(prev => ({
+          ...prev,
+          [imageType]: data.data.file,
+        }))
+        toast.success(`${imageType === 'image' ? 'Main image' : 'Hover image'} uploaded successfully`)
       }
     } catch (error) {
       console.log(error)
+      toast.error(`Failed to upload ${imageType === 'image' ? 'main image' : 'hover image'}`)
     }
+  }
+
+  const handleMainImageChange = async (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      await handleImageUpload(file, 'image')
+    }
+    // Reset the input
+    e.target.value = ''
+  }
+
+  const handleHoverImageChange = async (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      await handleImageUpload(file, 'hoverImage')
+    }
+    // Reset the input
+    e.target.value = ''
+  }
+
+  const triggerMainImageInput = () => {
+    mainImageInputRef.current?.click()
+  }
+
+  const triggerHoverImageInput = () => {
+    hoverImageInputRef.current?.click()
+  }
+
+  const removeImage = (imageType) => {
+    setFormData(prev => ({
+      ...prev,
+      [imageType]: '',
+    }))
+    toast.info(`${imageType === 'image' ? 'Main image' : 'Hover image'} removed`)
   }
 
   const handleSubmit = async (e) => {
@@ -118,7 +160,6 @@ function CategoryForm() {
         const data = await updateCategory(axiosPrivate, id, formData)
 
         if (data.success) {
-
           toast.success(`Category updated successfully`)
           navigate('/categories')
         }
@@ -127,13 +168,10 @@ function CategoryForm() {
         const data = await createCategory(axiosPrivate, formData)
 
         if (data.success) {
-
           toast.success(`Category created successfully`)
           navigate('/categories')
         }
-
       }
-
 
     } catch (error) {
       console.error('Error saving category:', error)
@@ -157,7 +195,7 @@ function CategoryForm() {
 
   const fetchCategories = async () => {
     try {
-      const data = await getCategories(axiosPrivate, { search });
+      const data = await getCategories(axiosPrivate, {});
 
       if (data.success) {
         setCategories(data.data?.result || []);
@@ -185,7 +223,6 @@ function CategoryForm() {
       console.error('Error updating category status:', error);
     }
   };
-
 
   console.log({ formData })
 
@@ -253,7 +290,7 @@ function CategoryForm() {
                 <option value={null}>N/A</option>
                 {
                   categories?.map((item) => (
-                    <option value={item?._id}>{item?.name}</option>
+                    <option key={item._id} value={item?._id}>{item?.name}</option>
                   ))
                 }
               </select>
@@ -295,33 +332,117 @@ function CategoryForm() {
         </div>
 
         <div className="card p-6">
-          <h2 className="text-lg font-medium text-neutral-900 mb-4">Category Image</h2>
+          <h2 className="text-lg font-medium text-neutral-900 mb-4">Category Images</h2>
 
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {/* Main Image */}
             <div>
+              <h3 className="text-sm font-medium text-neutral-900 mb-2">Main Image</h3>
               {formData.image ? (
-                <div className="relative">
+                <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4">
                   <img
                     src={formData.image?.location}
                     alt={formData.name}
                     className="w-full h-48 object-cover rounded-md"
                   />
-                  <ImageUpload handleImageChange={handleImageChange} kind={`change`} />
+                  <div className="absolute top-2 right-2 flex space-x-2">
+                    <button
+                      type="button"
+                      onClick={triggerMainImageInput}
+                      className="bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition"
+                    >
+                      <FiUpload className="h-4 w-4 text-gray-600" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeImage('image')}
+                      className="bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition text-red-600"
+                    >
+                      <FiTrash className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <ImageUpload handleImageChange={handleImageChange} kind={`upload`} />
+                <div 
+                  onClick={triggerMainImageInput}
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 transition"
+                >
+                  <div className="flex flex-col items-center justify-center h-48">
+                    <FiUpload className="h-8 w-8 text-gray-400 mb-2" />
+                    <p className="text-sm text-gray-600">Click to upload main image</p>
+                    <p className="text-xs text-gray-500 mt-1">PNG, JPG, WEBP up to 5MB</p>
+                  </div>
+                </div>
               )}
+              {/* Hidden file input for main image */}
+              <input
+                type="file"
+                ref={mainImageInputRef}
+                className="hidden"
+                onChange={handleMainImageChange}
+                accept="image/*"
+              />
             </div>
 
+            {/* Hover Image */}
             <div>
-              <h3 className="text-sm font-medium text-neutral-900 mb-2">Image Guidelines</h3>
-              <ul className="text-sm text-neutral-600 space-y-1 list-disc pl-5">
-                <li>Use high-quality images that represent the category</li>
-                <li>Recommended size: 800x600 pixels</li>
-                <li>Keep the file size under 5MB</li>
-                <li>Use a consistent style across categories</li>
-              </ul>
+              <h3 className="text-sm font-medium text-neutral-900 mb-2">Hover Image</h3>
+              {formData.hoverImage ? (
+                <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-4">
+                  <img
+                    src={formData.hoverImage?.location}
+                    alt={`${formData.name} hover`}
+                    className="w-full h-48 object-cover rounded-md"
+                  />
+                  <div className="absolute top-2 right-2 flex space-x-2">
+                    <button
+                      type="button"
+                      onClick={triggerHoverImageInput}
+                      className="bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition"
+                    >
+                      <FiUpload className="h-4 w-4 text-gray-600" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => removeImage('hoverImage')}
+                      className="bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition text-red-600"
+                    >
+                      <FiTrash className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div 
+                  onClick={triggerHoverImageInput}
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 transition"
+                >
+                  <div className="flex flex-col items-center justify-center h-48">
+                    <FiUpload className="h-8 w-8 text-gray-400 mb-2" />
+                    <p className="text-sm text-gray-600">Click to upload hover image</p>
+                    <p className="text-xs text-gray-500 mt-1">PNG, JPG, WEBP up to 5MB</p>
+                  </div>
+                </div>
+              )}
+              {/* Hidden file input for hover image */}
+              <input
+                type="file"
+                ref={hoverImageInputRef}
+                className="hidden"
+                onChange={handleHoverImageChange}
+                accept="image/*"
+              />
             </div>
+          </div>
+
+          <div className="mt-4">
+            <h3 className="text-sm font-medium text-neutral-900 mb-2">Image Guidelines</h3>
+            <ul className="text-sm text-neutral-600 space-y-1 list-disc pl-5">
+              <li>Use high-quality images that represent the category</li>
+              <li>Recommended size: 800x600 pixels</li>
+              <li>Keep the file size under 5MB</li>
+              <li>Use a consistent style across categories</li>
+              <li>Hover image will be shown when user hovers over the category</li>
+            </ul>
           </div>
         </div>
 
