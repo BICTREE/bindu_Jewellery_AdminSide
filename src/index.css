@@ -30,11 +30,11 @@
   }
 
   .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+    @apply bg-[#d3b363] text-white hover:bg-black focus:ring-[#d3b363];
   }
 
   .btn-secondary {
-    @apply bg-neutral-100 text-neutral-700 hover:bg-neutral-200 focus:ring-neutral-500;
+    @apply bg-[#d3b363] hover:bg-black focus:ring-neutral-500  text-white;
   }
 
   .btn-success {
@@ -148,4 +148,20 @@
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
+}
+
+
+.custom-quill .ql-editor {
+  min-height: 150px; /* editor height */
+  padding: 12px 16px;
+}
+
+.custom-quill .ql-editor::before {
+  content: attr(data-placeholder);
+  color: #9ca3af; /* Tailwind gray-400 */
+  font-style: italic;
+  line-height: 1.5;
+  position: absolute;
+  top: 12px; /* adjust vertical position */
+  left: 16px;
 }

@@ -5,7 +5,7 @@ import {
 } from 'react-icons/fi'
 import { TbTableOptions } from "react-icons/tb";
 import { MdProductionQuantityLimits } from "react-icons/md";
-
+import { FiBookOpen,FiVideo } from "react-icons/fi";
 import { useSelector } from 'react-redux'
 
 // Navigation items
@@ -19,6 +19,8 @@ const navigation = [
   { name: 'Categories', href: '/categories', icon: FiTag },
   { name: 'Orders', href: '/orders', icon: FiShoppingBag },
   { name: 'Discounts', href: '/discounts', icon: FiTag },
+ { name: 'Blog', href: '/blog', icon:  FiBookOpen },
+  { name: 'Media', href: '/media', icon:  FiVideo },
   { name: 'Settings', href: '/settings', icon: FiSettings },
 ]
 

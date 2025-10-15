@@ -2,10 +2,10 @@ import { Outlet } from 'react-router-dom'
 
 function AuthLayout() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-600 to-primary-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-black from-primary-600 to-primary-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <img src="/logo.svg" alt="Bindu Jewellrey" className="h-12 w-auto" />
+          <img src="/logo-icon.png" alt="Bindu Jewellrey" className="h-12 w-auto" />
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
           Bindu Jewellrey Admin
