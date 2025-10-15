@@ -29,6 +29,12 @@ import OptionForm from './pages/options/OptionForm'
 import Variations from './pages/variations/Variations'
 import VariationForm from './pages/variations/VariationForm'
 
+
+import Blog from "./pages/blog/BlogPage"
+import BlogForm from "./pages/blog/BlogForm"
+
+import MediaPage from "./pages/media/MediaPage"
+import MediaForm from "./pages/media/MediaForm";
 function App() {
 
   return (
@@ -75,6 +81,16 @@ function App() {
             <Route path="variations" element={<Variations />} />
             <Route path="variations/new" element={<VariationForm />} />
             <Route path="variations/:id" element={<VariationForm />} />
+
+           <Route path="blog" element={<Blog />} />
+            <Route path="blog/new" element={<BlogForm />} />
+            <Route path="blog/:id" element={<BlogForm />} />    
+
+        <Route path="media" element={<MediaPage />} />
+        <Route path="media/new" element={<MediaForm />} />
+        <Route path="media/:id" element={<MediaForm />} />
+
+
 
           </Route>
         </Route>
