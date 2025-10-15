@@ -8,7 +8,7 @@ import { createBanner, deleteBanner, getABanner, updateBanner } from "../../serv
 
 function BannerForm() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); 
   const isEditing = !!id;
   const fileInputRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
