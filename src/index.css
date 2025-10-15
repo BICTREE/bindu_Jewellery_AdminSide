@@ -30,11 +30,11 @@
   }
 
   .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+    @apply bg-[#d3b363] text-white hover:bg-black focus:ring-[#d3b363];
   }
 
   .btn-secondary {
-    @apply bg-neutral-100 text-neutral-700 hover:bg-neutral-200 focus:ring-neutral-500;
+    @apply bg-[#d3b363] hover:bg-black focus:ring-neutral-500;
   }
 
   .btn-success {
