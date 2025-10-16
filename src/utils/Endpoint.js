@@ -38,3 +38,13 @@ export const siteSettingsUrl = `/settings/site`
 
 export const logisticsUrl = `/logistics`
 export const shipCostsUrl = `/logistics/ship-costs`
+
+export const GetAllBlogsApi = '/blogs/all';
+
+export const BlogApi = '/blogs';
+
+export const mediaUrl = '/media';
+
+export const GetAllmediaUrl = '/media/all';
+
+
