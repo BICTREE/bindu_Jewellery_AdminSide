@@ -43,3 +43,8 @@ export const GetAllBlogsApi = '/blogs/all';
 
 export const BlogApi = '/blogs';
 
+export const mediaUrl = '/media';
+
+export const GetAllmediaUrl = '/media/all';
+
+
