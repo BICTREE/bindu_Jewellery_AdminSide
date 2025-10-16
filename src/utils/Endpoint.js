@@ -1,6 +1,6 @@
 const prodBaseUrl = "https://tessuto-server.vercel.app/api"
-// const devBaseUrl = "http://localhost:8080/api"
-const devBaseUrl = "https://bindu-jewellery-backend.vercel.app/api"
+const devBaseUrl = "http://localhost:8080/api"
+// const devBaseUrl = "https://bindu-jewellery-backend.vercel.app/api"
 
 export const baseUrl = import.meta.env.VITE_APP_ENV === "production" ? prodBaseUrl : devBaseUrl
 
