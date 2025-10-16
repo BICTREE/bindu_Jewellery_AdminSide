@@ -1,33 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiPlus, FiEdit2, FiTrash2 } from "react-icons/fi";
+import { GetAllBlogs } from "../../services/blogService";
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 
 const Blog = () => {
+  const axiosPrivate = useAxiosPrivate();
   const [blogs, setBlogs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  // Example data
+  // Fetch blogs from API
   useEffect(() => {
-    const mockData = [
-      {
-        id: 1,
-        title: "How to Care for Your Gold Jewellery",
-        author: "Admin",
-        slug: "care-for-your-gold-jewellery",
-        tags: ["Gold", "Jewellery"],
-        image: "/assets/images/blog01.jpg",
-        date: "2025-10-12",
-      },
-      {
-        id: 2,
-        title: "Top 10 Bridal Collections for 2025",
-        author: "Team Bindu",
-        slug: "top-10-bridal-collections-2025",
-        tags: ["Bridal", "Trends"],
-        image: "/assets/images/blog02.jpg",
-        date: "2025-10-10",
-      },
-    ];
-    setBlogs(mockData);
+    const fetchBlogs = async () => {
+      try {
+        setLoading(true);
+
+        const blogs = await GetAllBlogs(axiosPrivate);
+        console.log(blogs, "data");
+        setBlogs(blogs || []);
+        // setError(null);
+      } catch (err) {
+        console.error("Error fetching blogs:", err);
+        // setError("Failed to load blogs");
+        setBlogs([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
   }, []);
 
   const handleDelete = (id) => {
@@ -53,21 +55,28 @@ const Blog = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {blogs.map((blog) => (
           <div
-            key={blog.id}
+            key={blog._id}
             className="  bg-white shadow-md rounded-lg  border-gray-100 hover:shadow-lg transition-shadow"
-          > <div className="aspect-w-16 aspect-h-9 w-full overflow-hidden rounded-t-lg bg-neutral-200">
-            <img
-              src={blog.image}
-              alt={blog.title}
-              className="w-full h-48 object-cover"
-            />
+          >
+            {" "}
+            <div className="aspect-w-16 aspect-h-9 w-full overflow-hidden rounded-t-lg bg-neutral-200">
+              <img
+                src={blog.image.location}
+                alt={blog.title}
+                className="w-full h-48 object-cover"
+              />
             </div>
             <div className="p-4">
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 {blog.title}
               </h3>
               <p className="text-gray-500 text-sm mb-2">
-                By {blog.author} | {blog.date}
+                By {blog.author} |{" "}
+                {new Date(blog.publishedAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
               </p>
               <div className="flex flex-wrap gap-2 mb-3">
                 {blog.tags.map((tag, idx) => (
@@ -81,17 +90,17 @@ const Blog = () => {
               </div>
               <div className="flex gap-3">
                 <Link
-                  to={`/admin/blog/${blog.id}`}
+                  to={`/blog/${blog._id}`}
                   className="text-blue-600 hover:text-blue-800"
                 >
                   <FiEdit2 size={18} />
                 </Link>
-                <button
-                  onClick={() => handleDelete(blog.id)}
+                {/* <button
+                  onClick={() => handleDelete(blog._id)}
                   className="text-red-600 hover:text-red-800"
                 >
                   <FiTrash2 size={18} />
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
