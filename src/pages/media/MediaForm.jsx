@@ -50,7 +50,10 @@ const MediaForm = () => {
             // Set preview based on filetype
             if (media.filetype === "image" && media.file?.location) {
               setPreview(media.file.location);
-            } else if (media.filetype === "youtube" && media.youtubeLink) {
+            } else if (media.filetype === "video" && media.file?.location) {
+              setPreview(media.file.location);
+            }
+            else if (media.filetype === "youtube" && media.youtubeLink) {
               setPreview(media.youtubeLink);
             }
           }
