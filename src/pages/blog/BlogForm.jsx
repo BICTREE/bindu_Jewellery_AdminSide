@@ -21,6 +21,7 @@ const BlogForm = () => {
     image: null,
     content: "",
     isArchived: false,
+    publishedAt:""
   });
 
   const [preview, setPreview] = useState(null);
@@ -113,6 +114,7 @@ const BlogForm = () => {
           : [],
         content: formData.content,
         image: formData.image,
+        publishedAt:formData.publishedAt
       };
 
       if (id) {
@@ -211,6 +213,19 @@ const BlogForm = () => {
             type="text"
             name="tags"
             value={formData.tags}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-yellow-500"
+            placeholder="comma,separated,tags"
+          />
+        </div>
+
+        {/* Tags */}
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">PublishedAt</label>
+          <input
+            type="date"
+            name="publishedAt"
+            value={formData.publishedAt}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-yellow-500"
             placeholder="comma,separated,tags"
