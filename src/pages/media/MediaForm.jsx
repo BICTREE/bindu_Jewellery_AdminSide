@@ -24,6 +24,7 @@ const MediaForm = () => {
 
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false); // ✅ New state for file upload loading
   const [formErrors, setFormErrors] = useState({});
 
   // ✅ Fetch media data in edit mode
@@ -94,6 +95,7 @@ const MediaForm = () => {
   // ✅ Handle file upload
   const handleFileUpload = async (file) => {
     try {
+      setUploading(true); // ✅ Start uploading
       const res = await uploadSingleFile(axiosPrivate, file);
       if (res.success) {
         setFormData((prev) => ({
@@ -108,6 +110,8 @@ const MediaForm = () => {
     } catch (error) {
       console.error(error);
       toast.error("Failed to upload file");
+    } finally {
+      setUploading(false); // ✅ End uploading
     }
   };
 
@@ -128,7 +132,9 @@ const MediaForm = () => {
 
   // ✅ Trigger file input
   const triggerFileInput = () => {
-    fileInputRef.current?.click();
+    if (!uploading) { // ✅ Prevent triggering while uploading
+      fileInputRef.current?.click();
+    }
   };
 
   // ✅ Validate form
@@ -406,14 +412,16 @@ const MediaForm = () => {
                       <button
                         type="button"
                         onClick={triggerFileInput}
-                        className="bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition"
+                        disabled={uploading}
+                        className="bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <FiUpload className="h-4 w-4 text-gray-600" />
                       </button>
                       <button
                         type="button"
                         onClick={removeFile}
-                        className="bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition text-red-600"
+                        disabled={uploading}
+                        className="bg-white p-2 rounded-full shadow-md hover:bg-gray-50 transition text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <FiTrash className="h-4 w-4" />
                       </button>
@@ -423,19 +431,37 @@ const MediaForm = () => {
                   <div
                     onClick={triggerFileInput}
                     className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition ${
-                      formErrors.file ? 'border-red-500 bg-red-50' : 'border-gray-300 hover:border-gray-400'
+                      formErrors.file ? 'border-red-500 bg-red-50' : 
+                      uploading ? 'border-yellow-500 bg-yellow-50 cursor-wait' : 
+                      'border-gray-300 hover:border-gray-400'
                     }`}
                   >
                     <div className="flex flex-col items-center justify-center h-48">
-                      <FiUpload className="h-8 w-8 text-gray-400 mb-2" />
-                      <p className="text-sm text-gray-600">
-                        Click to upload {formData.filetype}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {formData.filetype === "image"
-                          ? "PNG, JPG, WEBP up to 5MB"
-                          : "MP4, MOV up to 10MB"}
-                      </p>
+                      {uploading ? (
+                        // ✅ Uploading State
+                        <>
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-600 mb-2"></div>
+                          <p className="text-sm text-gray-600">
+                            Uploading {formData.filetype}...
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Please wait
+                          </p>
+                        </>
+                      ) : (
+                        // ✅ Default State
+                        <>
+                          <FiUpload className="h-8 w-8 text-gray-400 mb-2" />
+                          <p className="text-sm text-gray-600">
+                            Click to upload {formData.filetype}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {formData.filetype === "image"
+                              ? "PNG, JPG, WEBP up to 5MB"
+                              : "MP4, MOV up to 10MB"}
+                          </p>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}
@@ -444,13 +470,14 @@ const MediaForm = () => {
                   <p className="text-red-500 text-sm mt-1">{formErrors.file}</p>
                 )}
 
-                {/* Hidden input - REMOVED required attribute */}
+                {/* Hidden input */}
                 <input
                   type="file"
                   ref={fileInputRef}
                   className="hidden"
                   accept={formData.filetype === "image" ? "image/*" : "video/*"}
                   onChange={handleFileChange}
+                  disabled={uploading}
                 />
               </div>
 
@@ -487,8 +514,8 @@ const MediaForm = () => {
             <button
               type="button"
               onClick={() => navigate("/media")}
-              className="border border-gray-300 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-100"
-              disabled={loading}
+              className="border border-gray-300 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-100 disabled:opacity-50"
+              disabled={loading || uploading}
             >
               Cancel
             </button>
@@ -498,12 +525,12 @@ const MediaForm = () => {
               <button
                 type="button"
                 onClick={handleArchiveToggle}
-                disabled={loading}
+                disabled={loading || uploading}
                 className={`${
                   formData.isArchived
                     ? "bg-green-600 hover:bg-green-700"
                     : "bg-red-600 hover:bg-red-700"
-                } text-white px-6 py-2 rounded-lg`}
+                } text-white px-6 py-2 rounded-lg disabled:opacity-50`}
               >
                 {formData.isArchived ? "Unarchive" : "Archive"}
               </button>
@@ -511,8 +538,8 @@ const MediaForm = () => {
 
             <button
               type="submit"
-              disabled={loading}
-              className="bg-[#d3b363] hover:bg-black text-white px-6 py-2 rounded-lg"
+              disabled={loading || uploading}
+              className="bg-[#d3b363] hover:bg-black text-white px-6 py-2 rounded-lg disabled:opacity-50"
             >
               {loading ? "Saving..." : "Save Media"}
             </button>
