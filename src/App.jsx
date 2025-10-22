@@ -32,6 +32,7 @@ import VariationForm from './pages/variations/VariationForm'
 
 import Blog from "./pages/blog/BlogPage"
 import BlogForm from "./pages/blog/BlogForm"
+import BlogView from "./pages/blog/BlogView";
 
 import MediaPage from "./pages/media/MediaPage"
 import MediaForm from "./pages/media/MediaForm";
@@ -85,7 +86,7 @@ function App() {
            <Route path="blog" element={<Blog />} />
             <Route path="blog/new" element={<BlogForm />} />
             <Route path="blog/:id" element={<BlogForm />} />    
-
+      <Route path="blog/view/:id" element={<BlogView />} />
         <Route path="media" element={<MediaPage />} />
         <Route path="media/new" element={<MediaForm />} />
         <Route path="media/:id" element={<MediaForm />} />
