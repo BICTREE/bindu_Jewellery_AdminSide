@@ -47,4 +47,8 @@ export const mediaUrl = '/media';
 
 export const GetAllmediaUrl = '/media/all';
 
+export const groupMediaUrl = '/media-groups';
+
+export const GetAllGroupMediaUrl = '/media-groups/admin/all';
+
 
